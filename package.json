@@ -32,9 +32,9 @@
   },
   "homepage": "https://github.com/buttercomponents/butter-component-show-header",
   "devDependencies": {
-    "butter-component-builder": "*"
+    "butter-component-builder": "buttercomponents/butter-component-builder"
   },
   "dependencies": {
-    "butter-component-stars": "*"
+    "butter-base-components": "buttercomponents/butter-base-components"
   }
 }
