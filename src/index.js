@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-
-//import i18n from './language';
-
-import Stars from 'butter-component-stars';
+import {Stars} from 'butter-base-components';
 
 import style from './styl/theme.styl';
+
+let i18n = {
+    __:(a) => (a)
+}
 
 class Rating extends Component {
     constructor() {
@@ -22,16 +23,21 @@ class Rating extends Component {
     };
 
     render() {
-        let props = this.props;
+        let {percentage} = this.props;
+
         return (
             <div className={style['shmi-rating']} onClick={this.toggleStars}>
                 {this.state.stars?
-                 <Stars percentage={Math.round(props.percentage) / 20} />
-                 :<div className="number-container-tv hidden">{Math.round(props.percentage) / 10} <em>/10</em></div>
+                 <Stars rating={Math.round(percentage) / 20} />
+                 :<div className="number-container-tv hidden">{Math.round(percentage) / 10} <em>/10</em></div>
                 }
             </div>
         )
     }
+}
+
+Rating.defaultProps = {
+    percentage: 0
 }
 
 let HeaderInfos = (props) => (
@@ -40,7 +46,7 @@ let HeaderInfos = (props) => (
         <span className={style['dot']}></span>
         <div className={style['shmi-runtime']}>{props.runtime} + 'min'</div>
         <span className={style['dot']}></span>
-        <div className={style['shmi-status']}>{props.status?i18n.__(props.status) : i18n.__('N/A')}</div>
+        <div className={style['shmi-status']}>{i18n.__(props.status)}</div>
         <span className={style['dot']}></span>
         <div className={style['shmi-genre']}>{i18n.__(props.genres[0])}</div>
         <span className={style['dot']}></span>
@@ -49,6 +55,14 @@ let HeaderInfos = (props) => (
         <Rating {...props.rating}/>
     </div>
 )
+
+HeaderInfos.defaultProps = {
+    year: 1970,
+    runtime: 60,
+    status: 'N/A',
+    genres: ['N/A'],
+    rating: 0
+}
 
 let HeaderActions= (props) => (
     <div className={style['sh-actions']}>
@@ -78,28 +92,25 @@ class LoadImage extends React.Component {
     };
 
     render() {
-        let props = this.props;
+        let {className, src, style, fallbackSrc, ...props} = this.props;
         let loaded = this.state.loaded || this.state.error;
-        let backgroundImage =  `url(${this.props.src})`;
+        let backgroundImage =  `url(${src})`;
 
-        let style = Object.assign(props.style || {}, {
+        style = Object.assign(style || {}, {
             backgroundImage: backgroundImage
         });
 
         if (this.state.error) {
-            let fallback = require (this.props.fallbackSrc);
+            let fallback = require (fallbackSrc);
             Object.assign(style, {
                 backgroundImage: `url(${fallback})`
             })
         }
 
-        loaded && Object.assign(style, {
-            transition: props.transition,
-            opacity: props.opacity
-        });
+        loaded && Object.assign(style, ...props);
 
         return (
-            <div {...props} style={style}>
+            <div className={className} src={src} style={style}>
                 <img style={{display: 'none'}} src={props.src}
                      onError={e => this.setState({error: true})}
                      onLoad={e => this.setState({loaded: true})}/>
